@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pilot 50 | Student Feedback Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+
+        /* Custom Background Gradient */
+        .bg-portal {
+            background: radial-gradient(circle at top right, #f8fafc, #eff6ff);
+        }
+
+        /* 3D Flip Card Logic */
+        .flip-card {
+            perspective: 1000px;
+            height: 280px;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+        }
+
+        .flip-card-back {
+            transform: rotateY(180deg);
+            background: #ffffff;
+            border: 2px solid #3b82f6;
+        }
+
+        /* Decorative Wave for Cards */
+        .card-wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40%;
+            background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(59,130,246,0.1) 100%);
+            z-index: 0;
+        }
+
+        .animate-popIn {
+            animation: popIn 0.5s cubic-bezier(0.26, 0.53, 0.74, 1.48) forwards;
+        }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.9) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        /* Ensure the hovered card is always on top of its neighbors */
+        .flip-card:hover {
+            z-index: 50;
+            position: relative;
+        }
+
+        /* Tooltip animation */
+        .group-hover\/tip\:block {
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, 10px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
+        }
+    </style>
+</head>
+<body class="bg-portal min-h-screen text-slate-800 antialiased">
+
+    <nav class="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold text-xl">B</span>
+                </div>
+                <span class="text-xl font-extrabold tracking-tight text-blue-900">Pilot 50 <span class="text-blue-500 font-light">Feedback</span></span>
+            </div>
+            <div class="hidden md:flex space-x-6 text-sm font-medium text-slate-500">
+                <!-- <a href="#" class="hover:text-blue-600 transition">Dashboard</a> -->
+                <a href="javascript:void(0)" onclick="toggleResources()" class="hover:text-blue-600 transition flex items-center">
+    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+    Resources & FAQ
+</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-5xl mx-auto px-6 py-12">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight mb-4">Weekly Feedback Hub</h1>
+            <p class="text-lg text-slate-600 max-w-2xl mx-auto font-light">
+                Access and reflect on your self-evaluation evaluations provided by your Career Coach.
+            </p>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-2xl shadow-blue-100 p-8 border border-white mb-16 relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-8 opacity-5">
+                <svg width="120" height="120" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2zm0 3.45l8.27 14.1H3.73L12 5.45z"/></svg>
+            </div>
+            
+            <form id="feedbackForm" class="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
+                <div class="space-y-2">
+                    <label class="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">Your Cohort</label>
+                    <select id="cohort" required class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all appearance-none cursor-pointer">
+                        <option value="Cohort 1">Cohort 1</option>
+                        <option value="Cohort 2">Cohort 2</option>
+                        <option value="Cohort 3">Cohort 3</option>
+                        <option value="Cohort 4">Cohort 4</option>
+                        <option value="Cohort 5">Cohort 5</option>
+                        <option value="Cohort 6">Cohort 6</option>
+                        <option value="Cohort 7">Cohort 7</option>
+                        <option value="Cohort 8">Cohort 8</option>
+                        <option value="Cohort 9">Cohort 9</option>
+                        <option value="Cohort 10">Cohort 10</option>
+                        <option value="Cohort 11">Cohort 11</option>
+                        </select>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">Pathway ID</label>
+                    <input type="text" id="pathwayID" placeholder="Enter 9-digit ID" required 
+                           class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">Target Week</label>
+                    <select id="week" required class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all appearance-none cursor-pointer">
+                        </select>
+                </div>
+
+                <div class="md:col-span-3 pt-4">
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl transition duration-300 shadow-xl shadow-blue-200 transform hover:-translate-y-1 active:scale-[0.98]">
+                        Fetch My Feedback
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div id="result" class="hidden">
+            </div>
+    </main>
+
+    <footer class="text-center py-12 text-slate-400 text-sm">
+        <p>&copy; 2026 Pilot 50 Student Support | Career Coaching Evaluation</p>
+    </footer>
+
+    <script src="script.js"></script>
+
+    <div id="resourcesModal" class="fixed inset-0 z-[100] hidden">
+    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="toggleResources()"></div>
+    
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white rounded-[2rem] shadow-2xl p-8 border border-slate-100">
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="text-2xl font-extrabold text-blue-900">Student Resources Hub</h2>
+            <button onclick="toggleResources()" class="p-2 hover:bg-slate-100 rounded-full transition">
+                <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+            <a href="https://sites.google.com/view/pilot50-studenthub/resources?authuser=0" target="_blank" class="flex items-center p-4 bg-blue-50 hover:bg-blue-100 rounded-2xl transition border border-blue-100 group">
+                <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white mr-4 shadow-lg shadow-blue-200">🏠</div>
+                <div><p class="font-bold text-blue-900 text-sm">Students Hub</p><p class="text-[10px] text-blue-600">Central Portal</p></div>
+            </a>
+            <a href="https://sites.google.com/view/tier1program/home" target="_blank" class="flex items-center p-4 bg-indigo-50 hover:bg-indigo-100 rounded-2xl transition border border-indigo-100 group">
+                <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white mr-4">✈️</div>
+                <div><p class="font-bold text-indigo-900 text-sm">Pilot 50 Tier 1 Program:</p><p class="text-[10px] text-indigo-600">Lessons & Scheduler</p></div>
+            </a>
+            <a href="https://byupathway.spero.company/" target="_blank" class="flex items-center p-4 bg-emerald-50 hover:bg-emerald-100 rounded-2xl transition border border-emerald-100 group">
+                <div class="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center text-white mr-4">🤖</div>
+                <div><p class="font-bold text-emerald-900 text-sm">Spero AI Practice</p><p class="text-[10px] text-emerald-600">English Speaking</p></div>
+            </a>
+            <a href="https://sites.google.com/view/english-chat-student-center/Scheduling?authuser=0" target="_blank" class="flex items-center p-4 bg-sky-50 hover:bg-sky-100 rounded-2xl transition border border-sky-100 group">
+                <div class="w-10 h-10 bg-sky-600 rounded-xl flex items-center justify-center text-white mr-4">💬</div>
+                <div><p class="font-bold text-sky-900 text-sm">English Chat</p><p class="text-[10px] text-sky-600">Book a Session</p></div>
+            </a>
+            <a href=" https://www.edclub.com/library/typing-jungle " target="_blank" class="md:col-span-2 flex items-center p-4 bg-slate-50 hover:bg-slate-100 rounded-2xl transition border border-slate-100 group">
+                <div class="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center text-white mr-4">⌨️</div>
+                <div><p class="font-bold text-slate-900 text-sm">Boost Your Typing</p><p class="text-[10px] text-slate-500">Speed Practice</p></div>
+            </a>
+        </div>
+
+        <div class="space-y-4">
+            <h3 class="text-xs font-black uppercase tracking-widest text-slate-400 mb-4">Frequently Asked Questions</h3>
+            
+            <div class="border border-slate-100 rounded-2xl p-5 bg-slate-50/50">
+                <p class="font-bold text-slate-800 text-sm mb-1 italic">When should I submit my self evaluations?</p>
+                <p class="text-xs text-slate-600 leading-relaxed">Self evaluation should be submitted every Friday by the end of the day.</p>
+            </div>
+
+            <div class="border border-slate-100 rounded-2xl p-5 bg-slate-50/50">
+                <p class="font-bold text-slate-800 text-sm mb-1 italic">What if I submit late due to an unforeseen situation?</p>
+                <p class="text-xs text-slate-600 leading-relaxed">Late submission comes with a penalty: you will receive the lowest grade, placing you in the list of average performers.</p>
+            </div>
+
+            <div class="border border-slate-100 rounded-2xl p-5 bg-slate-50/50">
+                <p class="font-bold text-slate-800 text-sm mb-1 italic">What happens if I forget to submit?</p>
+                <p class="text-xs text-slate-600 leading-relaxed">You will receive a time deduction of 19 hours if you attended the soft skills meeting, or 20 hours otherwise along with a Course Correction Plan (CCP).</p>
+            </div>
+
+            <div class="border border-slate-100 rounded-2xl p-5 bg-slate-50/50">
+                <p class="font-bold text-slate-800 text-sm mb-1 italic">What if I only book 1 English Chat Session instead of 2?</p>
+                <p class="text-xs text-slate-600 leading-relaxed">Communicate with your Team Lead immediately. Lack of communication results in being placed on the average performer list.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

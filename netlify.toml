@@ -1,0 +1,12 @@
+[build]
+  publish = "public"
+
+[functions]
+  node_bundler = "esbuild"
+  external_node_modules = ["node-fetch"]
+  directory = "netlify/functions"
+
+[[redirects]]
+  from = "/api/feedback"
+  to = "/.netlify/functions/feedback"
+  status = 200
